@@ -23,28 +23,28 @@ wandb/
 *.zip
 hf_upload*.json
 hf_upload*.md
-main.py
-uv.lock
+/main.py
+/uv.lock
 
 # Historical workspace material kept outside tracked release branches
-axolotl/
-code-eval-plus/
-deepspeed_configs/
-docker/
-eat/
-encryption-adaptive-train/
-evaluation_result/
-gen-eval/
-icml2026-rebuttal-slim/
-icml2026-submition/
-lm-evaluation-harness/
-lm-evaluation-harness-original/
-paperwork/
-scripts/evaluation/
+/axolotl/
+/code-eval-plus/
+/deepspeed_configs/
+/docker/
+/eat/
+/encryption-adaptive-train/
+/evaluation_result/
+/gen-eval/
+/icml2026-rebuttal-slim/
+/icml2026-submition/
+/lm-evaluation-harness/
+/lm-evaluation-harness-original/
+/paperwork/
+/scripts/evaluation/
 scripts/hf_upload*.py
-tok_overlap.ipynb
-tokenizer-robustness-overlap.ipynb
-tokenizer_overlap_matrix*.csv
+/tok_overlap.ipynb
+/tokenizer-robustness-overlap.ipynb
+/tokenizer_overlap_matrix*.csv
 
 # OS/editor noise
 .DS_Store

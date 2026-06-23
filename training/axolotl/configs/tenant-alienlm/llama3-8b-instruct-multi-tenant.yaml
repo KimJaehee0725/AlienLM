@@ -1,0 +1,86 @@
+base_model: meta-llama/Meta-Llama-3-8B-Instruct
+model_type: LlamaForCausalLM
+tokenizer_type: multi_alien_tokenizer.MultiAlienTokenizer
+tokenizer_config: meta-llama/Meta-Llama-3-8B-Instruct
+tokenizer_kwargs:
+  random_seed: 42
+  alien_tokenizer_paths:
+    - training/axolotl/tokenizers/alien/qwenv2_bucket_random_5_seed-42
+    - training/axolotl/tokenizers/alien/qwenv2_bucket_random_5_seed-43
+    - training/axolotl/tokenizers/alien/qwenv2_bucket_random_5_seed-44
+    - training/axolotl/tokenizers/alien/qwenv2_bucket_random_5_seed-45
+    - training/axolotl/tokenizers/alien/qwenv2_bucket_random_5_seed-46
+load_in_8bit: false
+load_in_4bit: false
+strict: false
+
+datasets:
+  - path: Magpie-Align/Magpie-Pro-300K-Filtered
+    type: chat_template
+    chat_template: llama3
+    conversation: llama3
+    field_messages: conversations
+    message_field_role: from
+    message_field_content: value
+    roles:
+      user: ["human", "user"]
+      assistant: ["gpt", "assistant", "ai"]
+      system: ["system"]
+  - path: Magpie-Align/Magpie-Reasoning-V1-150K
+    type: chat_template
+    chat_template: llama3
+    conversation: llama3
+    field_messages: conversations
+    message_field_role: from
+    message_field_content: value
+    roles:
+      user: ["human", "user"]
+      assistant: ["gpt", "assistant", "ai"]
+      system: ["system"]
+    message_field_content: value
+dataset_prepared_path: data-prepared/magpie-mixture-llama3-8b-instruct-multi-tenant
+val_set_size: 0.001
+output_dir: outputs/llama3-8b-instruct-multi-tenant
+
+sequence_len: 2048
+sample_packing: true
+eval_sample_packing: false
+pad_to_sequence_len: true
+
+hub_model_id:
+
+gradient_accumulation_steps: 4
+micro_batch_size: 2
+num_epochs: 10
+optimizer: paged_adamw_8bit
+lr_scheduler: constant
+learning_rate: 2e-5
+
+train_on_inputs: false
+group_by_length: false
+bf16: auto
+fp16:
+tf32: false
+
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: false
+early_stopping_patience:
+resume_from_checkpoint:
+logging_steps: 1
+xformers_attention:
+flash_attention: true
+
+warmup_steps: 100
+evals_per_epoch: 5
+eval_table_size:
+saves_per_epoch: 2
+debug:
+deepspeed:
+weight_decay: 0.0
+fsdp:
+fsdp_config:
+special_tokens:
+  bos_token: <|begin_of_text|>
+  eos_token: <|eot_id|>
+  pad_token: <|reserved_special_token_0|> 

@@ -25,6 +25,14 @@ init = [
 dev = [
     "pytest>=8.0",
 ]
+train = [
+    "axolotl",
+]
+eval = [
+    "evalplus>=0.3",
+    "lm_eval==0.4.7",
+    "vllm==0.7.2",
+]
 
 [tool.uv]
 package = false
