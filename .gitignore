@@ -1,0 +1,50 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info/
+
+# Virtual environments and local tools
+.venv/
+.venv-*/
+.python-version
+
+# Caches and local outputs
+.cache/
+data-prepared/
+outputs/
+runs/
+wandb/
+*.log
+
+# Local workspace archives and upload reports
+*.zip
+hf_upload*.json
+hf_upload*.md
+main.py
+uv.lock
+
+# Historical workspace material kept outside tracked release branches
+axolotl/
+code-eval-plus/
+deepspeed_configs/
+docker/
+eat/
+encryption-adaptive-train/
+evaluation_result/
+gen-eval/
+icml2026-rebuttal-slim/
+icml2026-submition/
+lm-evaluation-harness/
+lm-evaluation-harness-original/
+paperwork/
+scripts/evaluation/
+scripts/hf_upload*.py
+tok_overlap.ipynb
+tokenizer-robustness-overlap.ipynb
+tokenizer_overlap_matrix*.csv
+
+# OS/editor noise
+.DS_Store
