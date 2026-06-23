@@ -37,7 +37,6 @@ datasets:
       user: ["human", "user"]
       assistant: ["gpt", "assistant", "ai"]
       system: ["system"]
-    message_field_content: value
 dataset_prepared_path: data-prepared/magpie-mixture-llama3-8b-instruct-multi-tenant
 val_set_size: 0.001
 output_dir: outputs/llama3-8b-instruct-multi-tenant
