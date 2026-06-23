@@ -13,7 +13,9 @@ export PYTHONPATH="$REPO_DIR/training/axolotl/tokenizers:$PYTHONPATH"
 
 CONFIG="$REPO_DIR/training/axolotl/configs/tenant-alienlm/llama3-8b-instruct-multi-tenant.yaml"
 
-CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-"0,1,2,3"}
+if [ -z "${CUDA_VISIBLE_DEVICES+x}" ]; then
+  CUDA_VISIBLE_DEVICES="0,1,2,3"
+fi
 export CUDA_VISIBLE_DEVICES
 
 if [ "${DRY_RUN:-0}" = "1" ]; then

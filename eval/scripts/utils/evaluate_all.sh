@@ -59,9 +59,16 @@ fi
 DEFAULT_CACHE_ROOT=${HF_HOME:-"$PWD/.cache"}
 export HF_DATASETS_CACHE=${HF_DATASETS_CACHE:-"$DEFAULT_CACHE_ROOT/hf_datasets"}
 export TRANSFORMERS_CACHE=${TRANSFORMERS_CACHE:-"$DEFAULT_CACHE_ROOT/hf_models"}
-export CUDA_VISIBLE_DEVICES=$DEVICE
 
-NUM_GPUS=$(echo $DEVICE | awk -F, '{print NF}')
+if [ "$DEVICE" = "cpu" ]; then
+    export CUDA_VISIBLE_DEVICES=""
+    NUM_PROCESSES=1
+    DEVICE_LABEL="cpu"
+else
+    export CUDA_VISIBLE_DEVICES=$DEVICE
+    NUM_PROCESSES=$(echo $DEVICE | awk -F, '{print NF}')
+    DEVICE_LABEL="$DEVICE ($NUM_PROCESSES GPUs)"
+fi
 
 MODEL_ARGS="pretrained=$MODEL_PATH,trust_remote_code=True,dtype=bfloat16"
 if [ -n "$TOKENIZER_PATH" ]; then
@@ -92,7 +99,7 @@ for i in "${!TASKS[@]}"; do
 
     LAUNCH_ARGS=(
         --main_process_port 29610
-        --num_processes "$NUM_GPUS"
+        --num_processes "$NUM_PROCESSES"
         -m lm_eval --model hf
         --model_args "$MODEL_ARGS"
         --tasks "$TASK_NAME"
@@ -117,7 +124,7 @@ for i in "${!TASKS[@]}"; do
     echo "Model: $MODEL_PATH"
     [ -n "$TOKENIZER_PATH" ] && echo "Tokenizer: $TOKENIZER_PATH"
     [ -n "$PEFT_PATH" ] && echo "PEFT adapter: $PEFT_PATH"
-    echo "Device(s): $DEVICE ($NUM_GPUS GPUs)"
+    echo "Device(s): $DEVICE_LABEL"
     echo "Batch size: $BATCH_SIZE"
     echo "Output path: $OUTPUT_DIR/$TASK_NAME/${NUM_FEWSHOT}-shot"
     echo "Using chat template: $USE_CHAT_TEMPLATE"

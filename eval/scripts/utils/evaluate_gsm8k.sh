@@ -47,9 +47,16 @@ fi
 DEFAULT_CACHE_ROOT=${HF_HOME:-"$PWD/.cache"}
 export HF_DATASETS_CACHE=${HF_DATASETS_CACHE:-"$DEFAULT_CACHE_ROOT/hf_datasets"}
 export TRANSFORMERS_CACHE=${TRANSFORMERS_CACHE:-"$DEFAULT_CACHE_ROOT/hf_models"}
-export CUDA_VISIBLE_DEVICES=$DEVICE
 
-NUM_GPUS=$(echo $DEVICE | awk -F, '{print NF}')
+if [ "$DEVICE" = "cpu" ]; then
+    export CUDA_VISIBLE_DEVICES=""
+    NUM_PROCESSES=1
+    DEVICE_LABEL="cpu"
+else
+    export CUDA_VISIBLE_DEVICES=$DEVICE
+    NUM_PROCESSES=$(echo $DEVICE | awk -F, '{print NF}')
+    DEVICE_LABEL="$DEVICE ($NUM_PROCESSES GPUs)"
+fi
 TASK_NAMES=gsm8k_cot
 
 MODEL_ARGS="pretrained=$MODEL_PATH,trust_remote_code=True,dtype=bfloat16"
@@ -73,8 +80,8 @@ echo "Starting GSM8K-CoT evaluation"
 echo "========================================"
 echo "Model: $MODEL_PATH"
 [ -n "$PEFT_PATH" ] && echo "PEFT adapter: $PEFT_PATH"
-echo "Devices: $DEVICE"
-echo "Num GPUs: $NUM_GPUS"
+echo "Devices: $DEVICE_LABEL"
+echo "Num processes: $NUM_PROCESSES"
 echo "Few-shot: $FEW_SHOT"
 echo "Output Dir: $OUTPUT_DIR"
 echo "Use chat template: $USE_CHAT_TEMPLATE"
@@ -83,7 +90,7 @@ echo "System instruction: $SYSTEM_INSTRUCTION"
 echo "Model args: $MODEL_ARGS"
 echo "========================================"
 
-accelerate launch --main_process_port 29610 --num_processes "$NUM_GPUS" -m lm_eval --model hf \
+accelerate launch --main_process_port 29610 --num_processes "$NUM_PROCESSES" -m lm_eval --model hf \
     --model_args "$MODEL_ARGS" \
     --tasks $TASK_NAMES \
     --batch_size 32 \

@@ -1,6 +1,6 @@
 -r requirements.txt
 
-axolotl
+axolotl==0.8.0
 evalplus>=0.3
 lm_eval==0.4.7
 vllm==0.7.2

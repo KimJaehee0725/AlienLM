@@ -52,7 +52,11 @@ if [ -z "$MODEL_PATH" ] || [ -z "$OUTPUT_DIR" ]; then
 fi
 
 export HF_ALLOW_CODE_EVAL="1"
-export CUDA_VISIBLE_DEVICES=$DEVICE
+if [ "$DEVICE" = "cpu" ]; then
+    export CUDA_VISIBLE_DEVICES=""
+else
+    export CUDA_VISIBLE_DEVICES=$DEVICE
+fi
 
 MODEL_ARGS="pretrained=$MODEL_PATH,trust_remote_code=True,dtype=bfloat16,tensor_parallel_size=$TENSOR_PARALLEL_SIZE,gpu_memory_utilization=$GPU_MEMORY_UTILIZATION"
 if [ -n "$PEFT_PATH" ]; then
@@ -71,7 +75,7 @@ for i in "${!TASKS[@]}"; do
         --model vllm
         --model_args "$MODEL_ARGS"
         --tasks "$TASK_NAME"
-        --device cuda:0
+        --device "$DEVICE"
         --batch_size "$BATCH_SIZE"
         --output_path "$OUTPUT_PATH"
         --log_samples
