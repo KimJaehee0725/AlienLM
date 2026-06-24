@@ -131,29 +131,25 @@ print("restored:", restored)
 assert restored == plain
 ```
 
-The Llama 3 Full Alien model card example is copied below:
+For the Llama 3 Full Alien example above, the translation output follows the
+model card:
 
-<table>
-  <tr>
-    <th>Natural text</th>
-    <th>Alien text</th>
-  </tr>
-  <tr>
-    <td><pre>All happy families are alike; each unhappy family is unhappy in its own way.</pre></td>
-    <td><pre>One unhappyamilies                        
- hike..:              
- happy     
-                                                                        happy hodin                                                                                                             waypoints,</pre></td>
-  </tr>
-  <tr>
-    <th>Original token IDs</th>
-    <th>Alien token IDs</th>
-  </tr>
-  <tr>
-    <td><pre>[2460, 6380, 8689, 527, 27083, 26, 1855, 43251, 3070, 374, 43251, 304, 1202, 1866, 1648, 13]</pre></td>
-    <td><pre>[4054, 43251, 60004, 66417, 35331, 114100, 27381, 6380, 39185, 23136, 6380, 109132, 8299, 21649, 82386, 11]</pre></td>
-  </tr>
-</table>
+```text
+Natural text
+All happy families are alike; each unhappy family is unhappy in its own way.
+
+Alien text
+One unhappyamilies
+ hike..:
+ happy
+                                                                        happy hodin                                                                                                             waypoints,
+
+Original token IDs
+[2460, 6380, 8689, 527, 27083, 26, 1855, 43251, 3070, 374, 43251, 304, 1202, 1866, 1648, 13]
+
+Alien token IDs
+[4054, 43251, 60004, 66417, 35331, 114100, 27381, 6380, 39185, 23136, 6380, 109132, 8299, 21649, 82386, 11]
+```
 
 The same translation can be run from the command line:
 
