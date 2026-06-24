@@ -1,41 +1,75 @@
+<div align="center">
+
 # AlienLM
 
-Official code and research artifacts for **AlienLM: Alienization of Language for
-API-Boundary Privacy in Black-Box LLMs**.
+### Alienization of Language for API-Boundary Privacy in Black-Box LLMs
 
-AlienLM studies a client-side privacy layer for black-box LLM APIs. Plaintext is
-translated into an *Alien Language* through a vocabulary-scale token bijection,
-the target model is adapted with Alien Adaptation Training (AAT), and the client
-recovers the output back into natural language. The repository contains the
-tokenizer construction utilities, translator, tokenizer assets, Axolotl training
-configs, and lightweight evaluation entrypoints used for the paper experiments.
+**Jaehee Kim** · **Pilsung Kang**
 
-## Resources
+[📄 Paper](https://arxiv.org/abs/2601.22710) ·
+[🤗 Models](https://huggingface.co/collections/dsba-lab/alienlm) ·
+[🤗 Llama 3 Full Alien](https://huggingface.co/dsba-lab/llama3-8b-instruct-alienlm-full) ·
+[🧪 Recovery Evals](https://github.com/KimJaehee0725/AlienLM-recovery-evals) ·
+[💻 Code](https://github.com/KimJaehee0725/AlienLM)
+
+</div>
+
+---
+
+> **Image placeholder:** Add the main AlienLM overview figure here. A good
+> figure would show `plaintext -> alienization -> black-box LLM/API -> client
+> recovery`.
+
+**AlienLM** is a client-side privacy layer for black-box LLM APIs. It translates
+natural text into an *Alien Language* through a vocabulary-scale token bijection,
+adapts the target model with Alien Adaptation Training (AAT), and recovers the
+model output back into natural language on the client side.
+
+This repository contains tokenizer construction utilities, translator code,
+alien tokenizer assets, Axolotl training configs, and lightweight evaluation
+entrypoints for the ICML 2026 paper experiments.
+
+---
+
+## News and Resources
 
 - 📄 **Paper**: [arXiv:2601.22710](https://arxiv.org/abs/2601.22710)
-- 🤗 **Models**: [dsba-lab/AlienLM collection](https://huggingface.co/collections/dsba-lab/alienlm)
+- 🤗 **Model collection**: [dsba-lab/AlienLM](https://huggingface.co/collections/dsba-lab/alienlm)
 - 🤗 **Llama 3 Full Alien checkpoint**: [dsba-lab/llama3-8b-instruct-alienlm-full](https://huggingface.co/dsba-lab/llama3-8b-instruct-alienlm-full)
 - 🧪 **Recovery evaluations**: [KimJaehee0725/AlienLM-recovery-evals](https://github.com/KimJaehee0725/AlienLM-recovery-evals)
-- 💻 **Official repository**: [KimJaehee0725/AlienLM](https://github.com/KimJaehee0725/AlienLM)
+- 💻 **Official code**: [KimJaehee0725/AlienLM](https://github.com/KimJaehee0725/AlienLM)
 
-## Repository Guide
+## Components
 
-This repository is split by intended use:
+| Component | What it is for | Start here |
+| --- | --- | --- |
+| Alien tokenizer assets | Ready-to-use full and randomized alien tokenizers | `training/axolotl/tokenizers/alien/` |
+| Translator | Lossless text conversion between original and alien tokenizers | `translator/translator.py` |
+| Tokenizer construction | Token-frequency building, matching, and reordering utilities | `tokenizer/` |
+| AAT training | Axolotl configs and launchers for Alien Adaptation Training | `training/axolotl/` |
+| Evaluation | lm-evaluation-harness and EvalPlus launchers | `eval/` |
+| Recovery analysis | Recovery, robustness, and post-hoc experiments | [AlienLM-recovery-evals](https://github.com/KimJaehee0725/AlienLM-recovery-evals) |
 
-- `main`: compact tokenizer initialization and translator utilities
-- `icml`: paper experiment snapshot with tokenizer assets, Axolotl configs, and
-  evaluation launchers
-- `AlienLM-recovery-evals`: separate repository for recovery, robustness, and
-  post-hoc analysis experiments
+> **Image placeholder:** Add a compact pipeline or system diagram here. This is
+> the best place to visually explain the tokenizer bijection and client-side
+> recovery loop.
 
-The `icml` branch keeps only reproducible code and compact assets. Checkpoints,
+## Branches
+
+| Branch | Purpose |
+| --- | --- |
+| `main` | Minimal, stable entrypoint for tokenizer initialization and translation utilities |
+| `icml` | ICML 2026 experiment snapshot with tokenizer assets, training configs, and evaluation launchers |
+
+The `icml` branch keeps reproducible code and compact assets. Checkpoints,
 dataset caches, raw evaluation dumps, W&B runs, and local logs should stay
 outside the tracked tree. The included scripts default to ignored paths such as
 `.cache/` and `outputs/`.
 
 ## Install
 
-The recommended setup uses [`uv`](https://docs.astral.sh/uv/).
+The recommended setup uses [`uv`](https://docs.astral.sh/uv/). Run all commands
+from the repository root.
 
 ```bash
 git clone https://github.com/KimJaehee0725/AlienLM.git
@@ -66,7 +100,9 @@ If your environment cannot install vLLM, you can still use the tokenizer,
 translator, training configs, and non-vLLM lm-evaluation-harness paths by
 installing the relevant packages manually in a uv environment.
 
-## Quick Start: Translate Text
+## Run AlienLM
+
+### 1. Translate Text
 
 `TokenizerTranslator` converts text by preserving token IDs and swapping which
 tokenizer decodes those IDs.
@@ -123,7 +159,7 @@ The Llama 3 Full Alien model card example is copied below:
   </tr>
 </table>
 
-You can run the translator from the command line as well:
+The same translation can be run from the command line:
 
 ```bash
 ALIEN_TOKENIZER="$(pwd)/training/axolotl/tokenizers/alien/full"
@@ -141,7 +177,7 @@ A dependency-light smoke test is also provided:
 uv run python scripts/smoke/translator_roundtrip.py
 ```
 
-## Tokenizer Assets
+### 2. Use Tokenizer Assets
 
 The paper snapshot includes compact alien tokenizer assets under:
 
@@ -152,12 +188,11 @@ The paper snapshot includes compact alien tokenizer assets under:
 - `training/axolotl/tokenizers/alien/qwenv2_bucket_random_5_seed-45`
 - `training/axolotl/tokenizers/alien/qwenv2_bucket_random_5_seed-46`
 
-The alien tokenizers are designed to keep the original tokenizer vocabulary size
-and ID range while changing the token-string mapping for normal tokens. This
-lets the translator move between natural text and alienized text by preserving
-token IDs.
+The alien tokenizers keep the original tokenizer vocabulary size and ID range
+while changing the token-string mapping for normal tokens. This lets the
+translator move between natural text and alienized text by preserving token IDs.
 
-## Constructing Alien Tokenizers
+### 3. Construct Alien Tokenizers
 
 Build token-frequency dictionaries:
 
@@ -185,9 +220,7 @@ uv run python tokenizer/token_init/token_matching.py \
   --output matches-sim-and-diff.txt
 ```
 
-## Training
-
-The Axolotl configs use local tokenizer assets and relative output paths.
+### 4. Train with Axolotl
 
 Single alien tokenizer:
 
@@ -222,7 +255,7 @@ or set:
 export ALIEN_TOKENIZER_PATHS=/abs/path1,/abs/path2
 ```
 
-## Evaluation
+### 5. Evaluate
 
 LM benchmarks:
 
@@ -246,8 +279,8 @@ Useful environment variables:
 
 Recovery and robustness experiments are maintained separately in
 [AlienLM-recovery-evals](https://github.com/KimJaehee0725/AlienLM-recovery-evals)
-so that the main repository stays focused on tokenizer construction, training,
-and standard evaluation entrypoints.
+so that this repository stays focused on tokenizer construction, training, and
+standard evaluation entrypoints.
 
 ## Layout
 
@@ -261,6 +294,8 @@ and standard evaluation entrypoints.
 - `scripts/smoke/`: small checks that do not require paper-scale compute
 
 ## Citation
+
+If AlienLM helps your research, please consider citing:
 
 ```bibtex
 @inproceedings{kim2026alienlm,
