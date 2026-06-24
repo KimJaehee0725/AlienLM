@@ -54,8 +54,10 @@ fi
 export HF_ALLOW_CODE_EVAL="1"
 if [ "$DEVICE" = "cpu" ]; then
     export CUDA_VISIBLE_DEVICES=""
+    LM_EVAL_DEVICE="cpu"
 else
     export CUDA_VISIBLE_DEVICES=$DEVICE
+    LM_EVAL_DEVICE="cuda:0"
 fi
 
 MODEL_ARGS="pretrained=$MODEL_PATH,trust_remote_code=True,dtype=bfloat16,tensor_parallel_size=$TENSOR_PARALLEL_SIZE,gpu_memory_utilization=$GPU_MEMORY_UTILIZATION"
@@ -75,7 +77,7 @@ for i in "${!TASKS[@]}"; do
         --model vllm
         --model_args "$MODEL_ARGS"
         --tasks "$TASK_NAME"
-        --device "$DEVICE"
+        --device "$LM_EVAL_DEVICE"
         --batch_size "$BATCH_SIZE"
         --output_path "$OUTPUT_PATH"
         --log_samples
@@ -101,6 +103,7 @@ for i in "${!TASKS[@]}"; do
     echo "Model: $MODEL_PATH"
     [ -n "$PEFT_PATH" ] && echo "PEFT adapter: $PEFT_PATH"
     echo "Device: $DEVICE"
+    echo "lm_eval device: $LM_EVAL_DEVICE"
     echo "Batch size: $BATCH_SIZE"
     echo "Output path: $OUTPUT_PATH"
     echo "-------------------------------------------------------------------------"
