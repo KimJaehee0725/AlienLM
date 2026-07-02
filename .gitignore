@@ -48,3 +48,4 @@ scripts/hf_upload*.py
 
 # OS/editor noise
 .DS_Store
+._*

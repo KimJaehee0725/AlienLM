@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="alien-in-shirt-w-radio.png" alt="AlienLM mark" width="140">
+
 # AlienLM
 
 ### Alienization of Language for API-Boundary Privacy in Black-Box LLMs
@@ -16,9 +18,9 @@
 
 ---
 
-> **Image placeholder:** Add the main AlienLM overview figure here. A good
-> figure would show `plaintext -> alienization -> black-box LLM/API -> client
-> recovery`.
+<p align="center">
+  <img src="main-fig-paper.png" alt="AlienLM overview figure" width="100%">
+</p>
 
 **AlienLM** is a client-side privacy layer for black-box LLM APIs. It translates
 natural text into an *Alien Language* through a vocabulary-scale token bijection,
@@ -50,9 +52,6 @@ entrypoints for the ICML 2026 paper experiments.
 | Evaluation | lm-evaluation-harness and EvalPlus launchers | `eval/` |
 | Recovery analysis | Recovery, robustness, and post-hoc experiments | [AlienLM-recovery-evals](https://github.com/KimJaehee0725/AlienLM-recovery-evals) |
 
-> **Image placeholder:** Add a compact pipeline or system diagram here. This is
-> the best place to visually explain the tokenizer bijection and client-side
-> recovery loop.
 
 ## Branches
 
