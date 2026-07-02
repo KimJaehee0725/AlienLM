@@ -11,7 +11,7 @@
 [📄 Paper](https://arxiv.org/abs/2601.22710) ·
 [🤗 Models](https://huggingface.co/collections/dsba-lab/alienlm) ·
 [🤗 Llama 3 Full Alien](https://huggingface.co/dsba-lab/llama3-8b-instruct-alienlm-full) ·
-[🧪 Recovery Evals](https://github.com/KimJaehee0725/Alienlm-recovery-test) ·
+[🧪 Recovery Evals](https://github.com/KimJaehee0725/AlienLM-recovery-evals) ·
 [💻 Code](https://github.com/KimJaehee0725/AlienLM)
 
 </div>
@@ -39,7 +39,7 @@ use the [`icml`](https://github.com/KimJaehee0725/AlienLM/tree/icml) branch.
 - 📄 **Paper**: [arXiv:2601.22710](https://arxiv.org/abs/2601.22710)
 - 🤗 **Model collection**: [dsba-lab/AlienLM](https://huggingface.co/collections/dsba-lab/alienlm)
 - 🤗 **Llama 3 Full Alien checkpoint**: [dsba-lab/llama3-8b-instruct-alienlm-full](https://huggingface.co/dsba-lab/llama3-8b-instruct-alienlm-full)
-- 🧪 **Recovery evaluations**: [KimJaehee0725/Alienlm-recovery-test](https://github.com/KimJaehee0725/Alienlm-recovery-test)
+- 🧪 **Recovery evaluations**: [KimJaehee0725/AlienLM-recovery-evals](https://github.com/KimJaehee0725/AlienLM-recovery-evals)
 - 💻 **Official code**: [KimJaehee0725/AlienLM](https://github.com/KimJaehee0725/AlienLM)
 
 ## Branches
@@ -52,7 +52,7 @@ use the [`icml`](https://github.com/KimJaehee0725/AlienLM/tree/icml) branch.
 The `main` branch intentionally excludes checkpoints, raw evaluation dumps,
 dataset caches, W&B runs, and large experiment-only files. Recovery and
 robustness experiments are maintained separately in
-[Alienlm-recovery-test](https://github.com/KimJaehee0725/Alienlm-recovery-test).
+[AlienLM-recovery-evals](https://github.com/KimJaehee0725/AlienLM-recovery-evals).
 
 ## Components
 
