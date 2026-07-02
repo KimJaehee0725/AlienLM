@@ -11,7 +11,7 @@
 [📄 Paper](https://arxiv.org/abs/2601.22710) ·
 [🤗 Models](https://huggingface.co/collections/dsba-lab/alienlm) ·
 [🤗 Llama 3 Full Alien](https://huggingface.co/dsba-lab/llama3-8b-instruct-alienlm-full) ·
-[🧪 Recovery Evals](https://github.com/KimJaehee0725/AlienLM-recovery-evals) ·
+[🧪 Recovery Evals](https://github.com/KimJaehee0725/Alienlm-recovery-test) ·
 [💻 Code](https://github.com/KimJaehee0725/AlienLM)
 
 </div>
@@ -38,7 +38,7 @@ entrypoints for the ICML 2026 paper experiments.
 - 📄 **Paper**: [arXiv:2601.22710](https://arxiv.org/abs/2601.22710)
 - 🤗 **Model collection**: [dsba-lab/AlienLM](https://huggingface.co/collections/dsba-lab/alienlm)
 - 🤗 **Llama 3 Full Alien checkpoint**: [dsba-lab/llama3-8b-instruct-alienlm-full](https://huggingface.co/dsba-lab/llama3-8b-instruct-alienlm-full)
-- 🧪 **Recovery evaluations**: [KimJaehee0725/AlienLM-recovery-evals](https://github.com/KimJaehee0725/AlienLM-recovery-evals)
+- 🧪 **Recovery evaluations**: [KimJaehee0725/Alienlm-recovery-test](https://github.com/KimJaehee0725/Alienlm-recovery-test)
 - 💻 **Official code**: [KimJaehee0725/AlienLM](https://github.com/KimJaehee0725/AlienLM)
 
 ## Components
@@ -50,7 +50,7 @@ entrypoints for the ICML 2026 paper experiments.
 | Tokenizer construction | Token-frequency building, matching, and reordering utilities | `tokenizer/` |
 | AAT training | Axolotl configs and launchers for Alien Adaptation Training | `training/axolotl/` |
 | Evaluation | lm-evaluation-harness and EvalPlus launchers | `eval/` |
-| Recovery analysis | Recovery, robustness, and post-hoc experiments | [AlienLM-recovery-evals](https://github.com/KimJaehee0725/AlienLM-recovery-evals) |
+| Recovery analysis | Recovery, robustness, and post-hoc experiments | [Alienlm-recovery-test](https://github.com/KimJaehee0725/Alienlm-recovery-test) |
 
 
 ## Branches
@@ -273,7 +273,7 @@ Useful environment variables:
 - `TENSOR_PARALLEL_SIZE`: EvalPlus/vLLM tensor parallelism
 
 Recovery and robustness experiments are maintained separately in
-[AlienLM-recovery-evals](https://github.com/KimJaehee0725/AlienLM-recovery-evals)
+[Alienlm-recovery-test](https://github.com/KimJaehee0725/Alienlm-recovery-test)
 so that this repository stays focused on tokenizer construction, training, and
 standard evaluation entrypoints.
 
