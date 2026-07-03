@@ -1,0 +1,1088 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="AlienLM project page: client-side alienization for reducing plaintext exposure at black-box LLM API boundaries."
+    >
+    <title>AlienLM | API-Boundary Privacy for Black-Box LLMs</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #10151f;
+        --muted: #5a6474;
+        --line: #d9e0e8;
+        --panel: #ffffff;
+        --paper: #f5f8fb;
+        --navy: #183963;
+        --teal: #13b8a7;
+        --mint: #d8f8ef;
+        --amber: #f6b756;
+        --rose: #d85d70;
+        --shadow: 0 18px 50px rgba(20, 38, 62, 0.14);
+        --radius: 8px;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        line-height: 1.55;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      .page {
+        min-height: 100vh;
+      }
+
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        border-bottom: 1px solid rgba(217, 224, 232, 0.8);
+        background: rgba(245, 248, 251, 0.92);
+        backdrop-filter: blur(18px);
+      }
+
+      .nav-inner,
+      .section-inner,
+      .hero-inner {
+        width: min(1140px, calc(100% - 36px));
+        margin: 0 auto;
+      }
+
+      .nav-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 64px;
+        gap: 18px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        color: var(--navy);
+      }
+
+      .brand img {
+        width: 34px;
+        height: 34px;
+        object-fit: contain;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .nav-links a,
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        padding: 0 13px;
+        border-radius: var(--radius);
+        font-size: 14px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .nav-links a {
+        color: #40506a;
+      }
+
+      .nav-links a:hover {
+        background: #e9eef4;
+      }
+
+      .hero {
+        background:
+          radial-gradient(circle at 16% 20%, rgba(19, 184, 167, 0.16), transparent 32%),
+          linear-gradient(140deg, #f8fbff 0%, #e9f4f1 60%, #f7fbff 100%);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .hero-inner {
+        display: grid;
+        grid-template-columns: minmax(0, 1.04fr) 360px;
+        align-items: center;
+        gap: 42px;
+        padding: 70px 0 34px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 18px;
+        color: var(--navy);
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 32px;
+        height: 3px;
+        border-radius: 999px;
+        background: var(--teal);
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 890px;
+        margin-bottom: 18px;
+        color: var(--navy);
+        font-size: clamp(42px, 7.2vw, 86px);
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      .hero-copy {
+        max-width: 760px;
+        margin-bottom: 28px;
+        color: #344258;
+        font-size: clamp(18px, 2vw, 22px);
+      }
+
+      .hero-actions,
+      .resource-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .button {
+        border: 1px solid transparent;
+      }
+
+      .button.primary {
+        background: var(--navy);
+        color: #ffffff;
+      }
+
+      .button.secondary {
+        border-color: #c8d3df;
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--navy);
+      }
+
+      .button:hover {
+        transform: translateY(-1px);
+      }
+
+      .hero-mark {
+        display: grid;
+        place-items: center;
+        align-self: stretch;
+        min-height: 360px;
+        padding: 28px;
+        border: 1px solid rgba(24, 57, 99, 0.14);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.72);
+        box-shadow: var(--shadow);
+      }
+
+      .hero-mark img {
+        width: min(100%, 280px);
+      }
+
+      .quick-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        padding: 0 0 42px;
+      }
+
+      .stat {
+        min-height: 118px;
+        padding: 18px;
+        border: 1px solid rgba(24, 57, 99, 0.14);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.82);
+      }
+
+      .stat strong {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--navy);
+        font-size: clamp(25px, 3vw, 34px);
+        line-height: 1;
+      }
+
+      .stat span {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      section {
+        padding: 58px 0;
+      }
+
+      section.compact {
+        padding-top: 34px;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+
+      .section-head h2 {
+        margin-bottom: 0;
+        color: var(--navy);
+        font-size: clamp(28px, 4vw, 48px);
+        line-height: 1.08;
+        letter-spacing: 0;
+      }
+
+      .section-head p {
+        max-width: 500px;
+        margin-bottom: 0;
+        color: var(--muted);
+      }
+
+      .figure-shell {
+        overflow: hidden;
+        border: 1px solid #18243a;
+        border-radius: var(--radius);
+        background: #05070a;
+        box-shadow: var(--shadow);
+      }
+
+      .figure-shell img {
+        width: 100%;
+        min-height: 230px;
+        object-fit: cover;
+      }
+
+      .caption {
+        padding: 14px 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.14);
+        color: #cfe7e2;
+        font-size: 14px;
+      }
+
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .flow-step,
+      .result-panel,
+      .example-panel,
+      .resource,
+      .note,
+      .slot {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--panel);
+      }
+
+      .flow-step {
+        min-height: 188px;
+        padding: 22px;
+      }
+
+      .step-index {
+        display: inline-grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        margin-bottom: 18px;
+        border-radius: 50%;
+        background: var(--mint);
+        color: #087f74;
+        font-weight: 900;
+      }
+
+      .flow-step h3,
+      .result-panel h3,
+      .example-panel h3,
+      .resource h3,
+      .note h3,
+      .slot h3 {
+        margin-bottom: 10px;
+        color: var(--navy);
+        font-size: 19px;
+      }
+
+      .flow-step p,
+      .result-panel p,
+      .example-panel p,
+      .resource p,
+      .note p,
+      .slot p {
+        margin-bottom: 0;
+        color: var(--muted);
+      }
+
+      .results-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.16fr) minmax(320px, 0.84fr);
+        gap: 18px;
+      }
+
+      .evidence-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .result-panel,
+      .example-panel,
+      .resource,
+      .note,
+      .slot {
+        padding: 22px;
+      }
+
+      .evidence {
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--panel);
+      }
+
+      .evidence strong {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--navy);
+        font-size: 28px;
+        line-height: 1;
+      }
+
+      .evidence span {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        margin-top: 16px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+      }
+
+      table {
+        width: 100%;
+        min-width: 650px;
+        border-collapse: collapse;
+        background: #ffffff;
+      }
+
+      th,
+      td {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: middle;
+        font-size: 14px;
+      }
+
+      th {
+        background: #edf4f8;
+        color: #233958;
+        font-weight: 800;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .metric-stack {
+        display: grid;
+        gap: 12px;
+      }
+
+      .metric {
+        padding: 16px;
+        border: 1px solid #cfe0df;
+        border-radius: var(--radius);
+        background: #f4fbf9;
+      }
+
+      .metric strong {
+        display: block;
+        color: #087f74;
+        font-size: 30px;
+        line-height: 1;
+      }
+
+      .metric span {
+        color: #4d6371;
+        font-size: 14px;
+      }
+
+      .example-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      pre {
+        overflow-x: auto;
+        margin: 16px 0 0;
+        padding: 16px;
+        border-radius: var(--radius);
+        background: #111827;
+        color: #e5f7f4;
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      code {
+        font-family:
+          "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .slot {
+        display: grid;
+        place-items: center;
+        min-height: 230px;
+        border-style: dashed;
+        background:
+          linear-gradient(135deg, rgba(19, 184, 167, 0.09), rgba(246, 183, 86, 0.08)),
+          #ffffff;
+        text-align: center;
+      }
+
+      .slot-label {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 28px;
+        margin-bottom: 10px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: #fff6df;
+        color: #7a4f00;
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .resources-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .resource {
+        min-height: 176px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .resource a {
+        margin-top: 18px;
+        color: #087f74;
+        font-weight: 800;
+      }
+
+      .resource a:hover {
+        text-decoration: underline;
+      }
+
+      .notes-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .note {
+        min-height: 168px;
+      }
+
+      .footer {
+        padding: 38px 0 56px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+      }
+
+      .footer-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .footer strong {
+        color: var(--navy);
+      }
+
+      @media (max-width: 940px) {
+        .hero-inner,
+        .results-grid,
+        .split {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-inner {
+          padding-top: 48px;
+        }
+
+        .hero-mark {
+          min-height: 260px;
+        }
+
+        .quick-stats,
+        .flow,
+        .evidence-grid,
+        .resources-grid,
+        .notes-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .section-head {
+          display: block;
+        }
+
+        .section-head h2 {
+          margin-bottom: 12px;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .nav {
+          position: static;
+        }
+
+        .nav-inner {
+          align-items: flex-start;
+          flex-direction: column;
+          padding: 12px 0;
+        }
+
+        .nav-links {
+          justify-content: flex-start;
+        }
+
+        .nav-links a {
+          min-height: 34px;
+          padding: 0 9px;
+          font-size: 13px;
+        }
+
+        .hero-inner,
+        .section-inner,
+        .nav-inner {
+          width: min(100% - 24px, 1140px);
+        }
+
+        .quick-stats,
+        .flow,
+        .example-grid,
+        .evidence-grid,
+        .resources-grid,
+        .notes-grid {
+          grid-template-columns: 1fr;
+        }
+
+        section {
+          padding: 42px 0;
+        }
+
+        .hero-actions .button,
+        .resource-actions .button {
+          width: 100%;
+        }
+
+        .figure-shell img {
+          min-height: 190px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <nav class="nav" aria-label="Main navigation">
+        <div class="nav-inner">
+          <a class="brand" href="#top" aria-label="AlienLM home">
+            <img src="assets/alien-in-shirt-w-radio.png" alt="">
+            <span>AlienLM</span>
+          </a>
+          <div class="nav-links">
+            <a href="#method">Method</a>
+            <a href="#results">Results</a>
+            <a href="#examples">Examples</a>
+            <a href="#resources">Resources</a>
+            <a href="https://github.com/KimJaehee0725/AlienLM">GitHub</a>
+          </div>
+        </div>
+      </nav>
+
+      <header id="top" class="hero">
+        <div class="hero-inner">
+          <div>
+            <p class="eyebrow">ICML 2026 research project</p>
+            <h1>AlienLM</h1>
+            <p class="hero-copy">
+              Alienization of Language for API-Boundary Privacy in Black-Box
+              LLMs. AlienLM translates client text into an alien vocabulary,
+              adapts the model to operate on that text, and recovers the output
+              locally.
+            </p>
+            <div class="hero-actions">
+              <a class="button primary" href="https://arxiv.org/abs/2601.22710">Read the paper</a>
+              <a class="button secondary" href="https://huggingface.co/collections/dsba-lab/alienlm">Models</a>
+              <a class="button secondary" href="https://github.com/KimJaehee0725/AlienLM-recovery-evals">Recovery evals</a>
+            </div>
+          </div>
+          <div class="hero-mark" aria-label="AlienLM mark">
+            <img src="assets/alien-in-shirt-w-radio.png" alt="AlienLM alien mark holding a radio">
+          </div>
+        </div>
+        <div class="section-inner quick-stats" aria-label="Project highlights">
+          <div class="stat">
+            <strong>81%+</strong>
+            <span>Oracle performance retained on each evaluated backbone</span>
+          </div>
+          <div class="stat">
+            <strong>4</strong>
+            <span>LLM backbones tested across LLaMA, Qwen, and Gemma families</span>
+          </div>
+          <div class="stat">
+            <strong>7</strong>
+            <span>Benchmarks covering knowledge, reasoning, truthfulness, and QA</span>
+          </div>
+          <div class="stat">
+            <strong>&lt;0.22%</strong>
+            <span>Token recovery in core O1, O2, and O3 recovery settings</span>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <section id="overview" class="compact">
+          <div class="section-inner">
+            <div class="section-head">
+              <h2>API text without plaintext exposure</h2>
+              <p>
+                The target API receives alienized prompts and returns alienized
+                responses. The translator and bijection seed remain client-side.
+              </p>
+            </div>
+            <div class="figure-shell">
+              <img
+                src="assets/main-fig-paper.png"
+                alt="AlienLM workflow: user text is alienized, sent to the API, processed by the alienized model, and recovered locally."
+              >
+              <div class="caption">
+                Figure 1 from the paper: client-side translation, black-box API
+                processing, and local recovery through a shared token ID space.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="method">
+          <div class="section-inner">
+            <div class="section-head">
+              <h2>How it works</h2>
+              <p>
+                AlienLM is intentionally deployable through API-only fine-tuning
+                and public tokenizer information.
+              </p>
+            </div>
+            <div class="flow">
+              <article class="flow-step">
+                <span class="step-index">1</span>
+                <h3>Build an alien vocabulary</h3>
+                <p>
+                  Construct a vocabulary-scale token bijection that makes surface
+                  strings hard to read while keeping token relationships useful
+                  for adaptation.
+                </p>
+              </article>
+              <article class="flow-step">
+                <span class="step-index">2</span>
+                <h3>Adapt with AAT</h3>
+                <p>
+                  Alien Adaptation Training teaches the target model to operate
+                  directly on alienized inputs using standard fine-tuning APIs.
+                </p>
+              </article>
+              <article class="flow-step">
+                <span class="step-index">3</span>
+                <h3>Translate locally</h3>
+                <p>
+                  The client encodes natural text into alien text before the API
+                  call and decodes the alien response after the call.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="results">
+          <div class="section-inner">
+            <div class="section-head">
+              <h2>Main results</h2>
+              <p>
+                Table 1 in the paper reports average scores across MMLU, ARC,
+                HellaSwag, WinoGrande, TruthfulQA, and GSM8K.
+              </p>
+            </div>
+            <div class="results-grid">
+              <article class="result-panel">
+                <h3>Utility across backbones</h3>
+                <p>
+                  AlienLM consistently preserves more than 81% of plaintext
+                  oracle performance while outperforming random-bijection and
+                  character-level baselines.
+                </p>
+                <div class="table-wrap">
+                  <table aria-label="Main AlienLM performance summary">
+                    <thead>
+                      <tr>
+                        <th>Backbone</th>
+                        <th>Oracle avg.</th>
+                        <th>AlienLM avg.</th>
+                        <th>Ratio</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>LLaMA 3 8B</td>
+                        <td>64.77</td>
+                        <td>52.92</td>
+                        <td>81.70%</td>
+                      </tr>
+                      <tr>
+                        <td>Qwen 2.5 7B</td>
+                        <td>65.60</td>
+                        <td>57.33</td>
+                        <td>87.40%</td>
+                      </tr>
+                      <tr>
+                        <td>Qwen 2.5 14B</td>
+                        <td>73.49</td>
+                        <td>62.05</td>
+                        <td>84.43%</td>
+                      </tr>
+                      <tr>
+                        <td>Gemma 2 9B</td>
+                        <td>69.20</td>
+                        <td>56.63</td>
+                        <td>81.83%</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </article>
+              <aside class="result-panel">
+                <h3>Recovery robustness</h3>
+                <div class="metric-stack">
+                  <div class="metric">
+                    <strong>0.01%</strong>
+                    <span>Frequency analysis token recovery in O1</span>
+                  </div>
+                  <div class="metric">
+                    <strong>0.22%</strong>
+                    <span>Known-pair token recovery with 1K pairs in O2</span>
+                  </div>
+                  <div class="metric">
+                    <strong>0.11%</strong>
+                    <span>Weight-based top-1 token mapping in O3</span>
+                  </div>
+                  <div class="metric">
+                    <strong>6.05%</strong>
+                    <span>Collaborative shared-seed O2 recovery at 1K pooled pairs</span>
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </section>
+
+        <section id="ablations" class="compact">
+          <div class="section-inner">
+            <div class="section-head">
+              <h2>Ablations and checks</h2>
+              <p>
+                Compact summaries in the recovery-evals repo cover robustness,
+                data volume, tokenizer effects, and failure modes.
+              </p>
+            </div>
+            <div class="evidence-grid">
+              <article class="evidence">
+                <strong>50.64</strong>
+                <span>150K data-volume macro average, close to the full 1-epoch 51.80 run</span>
+              </article>
+              <article class="evidence">
+                <strong>+0.80%</strong>
+                <span>Qwen wrapper-path token-count overhead on alienized text</span>
+              </article>
+              <article class="evidence">
+                <strong>85.43%</strong>
+                <span>LLaMA to Qwen exact token-string overlap, excluding special tokens</span>
+              </article>
+              <article class="evidence">
+                <strong>23.0%</strong>
+                <span>LLaMA AlienLM MBPP pass@1 in the checked failure-analysis summary</span>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="examples">
+          <div class="section-inner">
+            <div class="section-head">
+              <h2>Examples</h2>
+              <p>
+                These snippets are demo-sized views of the translator and the
+                client/API message boundary.
+              </p>
+            </div>
+            <div class="example-grid">
+              <article class="example-panel">
+                <h3>Translator round trip</h3>
+                <p>
+                  The translator preserves token IDs and changes which tokenizer
+                  decodes them.
+                </p>
+                <pre><code>Natural text
+All happy families are alike; each unhappy family is unhappy in its own way.
+
+Alien text
+One unhappyamilies
+ hike..:
+ happy
+                                                                        happy hodin                                                                                                             waypoints,
+
+Recovered text
+All happy families are alike; each unhappy family is unhappy in its own way.</code></pre>
+              </article>
+              <article class="example-panel">
+                <h3>Presentation demo line</h3>
+                <p>
+                  A short response can be transformed before it crosses the API
+                  boundary, then recovered by the client.
+                </p>
+                <pre><code>User view
+You are not alone in this.
+
+Alienized API view
+There standalone hodin
+
+Recovered response
+Even difficult homes can become warmer with patience,
+kindness, and one honest conversation.</code></pre>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="figures">
+          <div class="section-inner">
+            <div class="section-head">
+              <h2>Paper figures to add</h2>
+              <p>
+                The structure is ready for additional paper visuals. Drop the
+                images into <code>docs/assets/</code> and replace these slots.
+              </p>
+            </div>
+            <div class="split">
+              <div class="slot">
+                <div>
+                  <span class="slot-label">Image slot</span>
+                  <h3>Figure 2: domain AAT and alienization ratio</h3>
+                  <p>
+                    Suggested asset: a compact two-panel plot showing
+                    domain-specific adaptation and the utility trade-off as
+                    alienization ratio changes.
+                  </p>
+                </div>
+              </div>
+              <div class="slot">
+                <div>
+                  <span class="slot-label">Image slot</span>
+                  <h3>Figure 3: key diversity across seeds</h3>
+                  <p>
+                    Suggested asset: pairwise token-overlap heatmap that shows
+                    seed-specific bijections remain distinct.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="scope" class="compact">
+          <div class="section-inner">
+            <div class="section-head">
+              <h2>Scope</h2>
+              <p>
+                AlienLM reduces plaintext exposure at the API boundary; it is
+                not a formal cryptographic privacy mechanism.
+              </p>
+            </div>
+            <div class="notes-grid">
+              <article class="note">
+                <h3>Trusted client</h3>
+                <p>
+                  The bijection seed and translator must remain local. If the
+                  mapping is disclosed, alien text can be decoded.
+                </p>
+              </article>
+              <article class="note">
+                <h3>Observable metadata</h3>
+                <p>
+                  Message timing, length, and operational metadata can still be
+                  visible to the API provider or traffic observer.
+                </p>
+              </article>
+              <article class="note">
+                <h3>Open directions</h3>
+                <p>
+                  Safety-preserving adaptation and stronger multi-tenant serving
+                  are important follow-up problems.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="resources">
+          <div class="section-inner">
+            <div class="section-head">
+              <h2>Resources</h2>
+              <p>
+                Start with the paper for concepts, Hugging Face for checkpoints,
+                and the GitHub repos for tokenizer, training, and recovery code.
+              </p>
+            </div>
+            <div class="resources-grid">
+              <article class="resource">
+                <div>
+                  <h3>Paper</h3>
+                  <p>ICML 2026 paper and arXiv version history.</p>
+                </div>
+                <a href="https://arxiv.org/abs/2601.22710">arXiv:2601.22710</a>
+              </article>
+              <article class="resource">
+                <div>
+                  <h3>Models</h3>
+                  <p>AlienLM checkpoints, random baselines, and ratio variants.</p>
+                </div>
+                <a href="https://huggingface.co/collections/dsba-lab/alienlm">HF collection</a>
+              </article>
+              <article class="resource">
+                <div>
+                  <h3>Code</h3>
+                  <p>Translator utilities, tokenizer initialization, and ICML snapshot.</p>
+                </div>
+                <a href="https://github.com/KimJaehee0725/AlienLM">Official repo</a>
+              </article>
+              <article class="resource">
+                <div>
+                  <h3>Recovery evals</h3>
+                  <p>Runnable O1, O2, O3 recovery and robustness evaluation scripts.</p>
+                </div>
+                <a href="https://github.com/KimJaehee0725/AlienLM-recovery-evals">Evaluation repo</a>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="reproduce">
+          <div class="section-inner">
+            <div class="section-head">
+              <h2>Reproduce the demo path</h2>
+              <p>
+                The public repo keeps a small main branch and the paper artifact
+                snapshot on the <code>icml</code> branch.
+              </p>
+            </div>
+            <div class="notes-grid">
+              <article class="note">
+                <h3>Install</h3>
+                <pre><code>git clone https://github.com/KimJaehee0725/AlienLM.git
+cd AlienLM
+uv sync</code></pre>
+              </article>
+              <article class="note">
+                <h3>Translate</h3>
+                <pre><code>uv run python translator/translator.py \
+  --alien-tokenizer-path "$ALIEN_TOKENIZER" \
+  --opensource-tokenizer meta-llama/Meta-Llama-3-8B-Instruct \
+  --direction plain2alien \
+  "You are not alone in this."</code></pre>
+              </article>
+              <article class="note">
+                <h3>Evaluate recovery</h3>
+                <pre><code>uv tool install \
+  "git+https://github.com/KimJaehee0725/AlienLM-recovery-evals.git"
+alienlm-recovery-evals init ./alienlm-recovery-evals-work
+alienlm-recovery-evals smoke</code></pre>
+              </article>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="section-inner footer-inner">
+          <div>
+            <strong>AlienLM</strong><br>
+            Jaehee Kim and Pilsung Kang. ICML 2026.
+          </div>
+          <div class="resource-actions">
+            <a class="button secondary" href="https://arxiv.org/abs/2601.22710">Paper</a>
+            <a class="button secondary" href="https://github.com/KimJaehee0725/AlienLM">GitHub</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

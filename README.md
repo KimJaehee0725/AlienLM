@@ -9,6 +9,7 @@
 **Jaehee Kim** · **Pilsung Kang**
 
 [📄 Paper](https://arxiv.org/abs/2601.22710) ·
+[🌐 Project Page](https://kimjaehee0725.github.io/AlienLM/) ·
 [🤗 Models](https://huggingface.co/collections/dsba-lab/alienlm) ·
 [🤗 Llama 3 Full Alien](https://huggingface.co/dsba-lab/llama3-8b-instruct-alienlm-full) ·
 [🧪 Recovery Evals](https://github.com/KimJaehee0725/AlienLM-recovery-evals) ·
@@ -37,6 +38,7 @@ use the [`icml`](https://github.com/KimJaehee0725/AlienLM/tree/icml) branch.
 ## News and Resources
 
 - 📄 **Paper**: [arXiv:2601.22710](https://arxiv.org/abs/2601.22710)
+- 🌐 **Project page**: [kimjaehee0725.github.io/AlienLM](https://kimjaehee0725.github.io/AlienLM/)
 - 🤗 **Model collection**: [dsba-lab/AlienLM](https://huggingface.co/collections/dsba-lab/alienlm)
 - 🤗 **Llama 3 Full Alien checkpoint**: [dsba-lab/llama3-8b-instruct-alienlm-full](https://huggingface.co/dsba-lab/llama3-8b-instruct-alienlm-full)
 - 🧪 **Recovery evaluations**: [KimJaehee0725/AlienLM-recovery-evals](https://github.com/KimJaehee0725/AlienLM-recovery-evals)
