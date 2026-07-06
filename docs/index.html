@@ -208,6 +208,12 @@
         transform: translateY(-1px);
       }
 
+      .button:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+        transform: none;
+      }
+
       .hero-mark {
         display: grid;
         place-items: center;
@@ -461,6 +467,144 @@
         gap: 18px;
       }
 
+      .demo-panel {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .demo-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .demo-header h3 {
+        margin-bottom: 6px;
+        color: var(--navy);
+        font-size: 19px;
+      }
+
+      .demo-header p {
+        margin-bottom: 0;
+        color: var(--muted);
+      }
+
+      .demo-models {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        color: #40506a;
+        font-size: 13px;
+      }
+
+      .demo-models span {
+        display: inline-flex;
+        min-height: 28px;
+        align-items: center;
+        padding: 0 9px;
+        border: 1px solid #d5dee8;
+        border-radius: 999px;
+        background: #f8fafc;
+      }
+
+      .demo-body {
+        display: grid;
+        grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+        gap: 18px;
+        padding: 20px;
+      }
+
+      .demo-input,
+      .demo-output {
+        min-width: 0;
+      }
+
+      .demo-input label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--navy);
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 176px;
+        resize: vertical;
+        padding: 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: var(--radius);
+        color: var(--ink);
+        background: #fbfdff;
+        font: inherit;
+        line-height: 1.5;
+      }
+
+      textarea:focus {
+        border-color: var(--teal);
+        outline: 3px solid rgba(19, 184, 167, 0.18);
+      }
+
+      .demo-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 12px;
+      }
+
+      .demo-status {
+        min-height: 24px;
+        margin-top: 12px;
+        color: #40506a;
+        font-size: 14px;
+      }
+
+      .demo-output-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .demo-box {
+        min-height: 118px;
+        padding: 14px;
+        border: 1px solid #d8e2ea;
+        border-radius: var(--radius);
+        background: #f8fafc;
+      }
+
+      .demo-box.full {
+        grid-column: 1 / -1;
+      }
+
+      .demo-box h3 {
+        margin-bottom: 8px;
+        color: var(--navy);
+        font-size: 14px;
+      }
+
+      .demo-text,
+      .demo-ids {
+        overflow: auto;
+        max-height: 168px;
+        margin: 0;
+        color: #25344a;
+        font:
+          13px / 1.55 "SFMono-Regular", Consolas, "Liberation Mono", Menlo,
+          monospace;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .demo-ids {
+        color: #075f57;
+      }
+
       pre {
         overflow-x: auto;
         margin: 16px 0 0;
@@ -563,6 +707,7 @@
       @media (max-width: 940px) {
         .hero-inner,
         .results-grid,
+        .demo-body,
         .split {
           grid-template-columns: 1fr;
         }
@@ -622,6 +767,7 @@
         .quick-stats,
         .flow,
         .example-grid,
+        .demo-output-grid,
         .evidence-grid,
         .resources-grid,
         .notes-grid {
@@ -653,6 +799,7 @@
           </a>
           <div class="nav-links">
             <a href="#method">Method</a>
+            <a href="#demo">Demo</a>
             <a href="#results">Results</a>
             <a href="#examples">Examples</a>
             <a href="#resources">Resources</a>
@@ -760,6 +907,72 @@
                   call and decodes the alien response after the call.
                 </p>
               </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="demo" class="compact">
+          <div class="section-inner">
+            <div class="section-head">
+              <h2>Live tokenizer demo</h2>
+              <p>
+                This runs Qwen tokenizers in your browser. No text is sent to a
+                server, and no model weights are loaded.
+              </p>
+            </div>
+            <div class="demo-panel">
+              <div class="demo-header">
+                <div>
+                  <h3>Qwen 2.5 7B Instruct Full Alien</h3>
+                  <p>
+                    Encode with one tokenizer, decode with the other, then check
+                    the recovered text.
+                  </p>
+                </div>
+                <div class="demo-models" aria-label="Tokenizer model ids">
+                  <span>Qwen/Qwen2.5-7B-Instruct</span>
+                  <span>dsba-lab/qwen25-7b-instruct-alienlm-full</span>
+                </div>
+              </div>
+              <div class="demo-body">
+                <div class="demo-input">
+                  <label for="demo-input">Input text</label>
+                  <textarea id="demo-input" spellcheck="false">All happy families are alike; each unhappy family is unhappy in its own way.</textarea>
+                  <div class="demo-actions">
+                    <button class="button primary" id="plain-to-alien" type="button">Plain to alien</button>
+                    <button class="button secondary" id="alien-to-plain" type="button">Alien to plain</button>
+                    <button class="button secondary" id="round-trip" type="button">Round trip</button>
+                    <button class="button secondary" id="load-example" type="button">Reset example</button>
+                  </div>
+                  <div class="demo-status" id="demo-status" role="status">
+                    Tokenizers load on first use.
+                  </div>
+                </div>
+                <div class="demo-output" aria-live="polite">
+                  <div class="demo-output-grid">
+                    <div class="demo-box full">
+                      <h3>Translated text</h3>
+                      <p class="demo-text" id="translated-text">Run a translation to see the alienized or recovered text.</p>
+                    </div>
+                    <div class="demo-box">
+                      <h3>Recovered text</h3>
+                      <p class="demo-text" id="recovered-text">-</p>
+                    </div>
+                    <div class="demo-box">
+                      <h3>Round-trip check</h3>
+                      <p class="demo-text" id="roundtrip-check">-</p>
+                    </div>
+                    <div class="demo-box full">
+                      <h3>Token IDs used by the translator</h3>
+                      <p class="demo-ids" id="translator-ids">-</p>
+                    </div>
+                    <div class="demo-box full">
+                      <h3>Same natural text encoded by the alien tokenizer</h3>
+                      <p class="demo-ids" id="alien-natural-ids">-</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -1084,5 +1297,6 @@ alienlm-recovery-evals smoke</code></pre>
         </div>
       </footer>
     </div>
+    <script type="module" src="assets/tokenizer-demo.js"></script>
   </body>
 </html>
