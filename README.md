@@ -60,7 +60,7 @@ robustness experiments are maintained separately in
 
 | Component | What it is for | Start here |
 | --- | --- | --- |
-| Translator | Lossless text conversion between original and alien tokenizers | `translator/translator.py` |
+| Translator | Token-ID translation and text-only response recovery utilities | `translator/translator.py` |
 | Tokenizer initialization | Token matching and randomized token reordering utilities | `tokenizer/token_init/` |
 | Smoke checks | Small local checks that do not require paper-scale compute | `scripts/smoke/` |
 | Paper artifacts | Tokenizer assets, AAT configs, and evaluation launchers | [`icml` branch](https://github.com/KimJaehee0725/AlienLM/tree/icml) |
@@ -97,6 +97,11 @@ tokenizer decodes those IDs.
 - `plain2alien`: encode with the original tokenizer, decode with the alien tokenizer
 - `alien2plain`: encode with the alien tokenizer, decode with the original tokenizer
 
+These operations preserve the intended token-ID mapping, but tokenizer decoding
+is not generally injective: a decoded string can correspond to multiple token
+segmentations. Consequently, text-only API round trips are not mathematically
+lossless for arbitrary generated ID sequences.
+
 Download the tokenizer files for the Llama 3 Full Alien checkpoint:
 
 ```bash
@@ -132,6 +137,41 @@ print("restored:", restored)
 assert restored == plain
 ```
 
+The assertion above applies to this canonical example. Model-generated output
+can contain a non-canonical segmentation even when the visible text is valid.
+
+## Recover a Text-Only API Response
+
+When local inference or evaluation exposes generated IDs, do not convert them
+through the original tokenizer first. Decode them directly:
+
+```python
+plain_response = translator.decode_token_ids(
+    generated_ids,
+    skip_special_tokens=True,
+)
+```
+
+A black-box API may instead apply its fixed original tokenizer and return only
+text. For that case, AlienLM provides an explicit experimental recovery path:
+
+```python
+plain_response = translator.recover_server_response(server_text)
+```
+
+This method builds the inverse decoder lattice, keeps minimum-token candidate
+segmentations, and ranks them using tokenizer-internal signals only. It does not
+require token IDs, logprobs, changes to the server tokenizer, or another language
+model. The current implementation supports the ByteLevel decoder used by Llama
+3 and the Replace/ByteFallback/Fuse decoder used by Gemma 2.
+
+Recovery remains heuristic because distinct ID sequences may decode to exactly
+the same server text. It is intended for short responses; long-form output,
+invalid byte sequences rendered as the replacement character, and multiple
+equally plausible candidates may not be recovered exactly. Applications that
+require strict reversibility must obtain token-level metadata or use a reversible
+transport protocol.
+
 For the Llama 3 Full Alien example above, the translation output follows the
 model card:
 
@@ -163,6 +203,8 @@ uv run python translator/translator.py \
   --direction plain2alien \
   "All happy families are alike; each unhappy family is unhappy in its own way."
 ```
+
+For a text-only server response, use `--direction recover-server-response`.
 
 Run the dependency-light round-trip smoke test:
 

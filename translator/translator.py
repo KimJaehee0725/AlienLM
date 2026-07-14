@@ -1,9 +1,14 @@
 import argparse
 import sys
 from pathlib import Path
-from typing import Iterable, List, Sequence, Union
+from typing import Sequence, Union
 
 from transformers import AutoTokenizer
+
+try:
+    from .inverse_segmentation import TextResponseRecoverer
+except ImportError:  # Support `python translator/translator.py ...`.
+    from inverse_segmentation import TextResponseRecoverer
 
 
 TextOrList = Union[str, Sequence[str]]
@@ -50,6 +55,7 @@ class TokenizerTranslator:
         self.opensource_tokenizer = _load_tokenizer(opensource_tokenizer, trust_remote_code=trust_remote_code)
 
         self._assert_compatibility()
+        self._response_recoverer = None
 
     def _assert_compatibility(self) -> None:
         # Class name check
@@ -81,6 +87,29 @@ class TokenizerTranslator:
     def plain2alien(self, text: TextOrList) -> TextOrList:
         return self._translate(text, source=self.opensource_tokenizer, target=self.alien_tokenizer)
 
+    def recover_server_response(self, text: TextOrList) -> TextOrList:
+        """Recover plain text when a fixed server returns decoded text only.
+
+        This differs from ``alien2plain``: the input is assumed to be the
+        output of ``opensource_tokenizer.decode(generated_ids)`` and may have
+        lost its original token boundaries.
+        """
+        if isinstance(text, str):
+            if self._response_recoverer is None:
+                self._response_recoverer = TextResponseRecoverer(
+                    self.opensource_tokenizer,
+                    self.alien_tokenizer,
+                )
+            return self._response_recoverer.recover(text).text
+        if isinstance(text, (list, tuple)):
+            return [self.recover_server_response(item) for item in text]
+        raise TypeError(f"Unsupported text type: {type(text)}")
+
+    def decode_token_ids(self, token_ids, **kwargs) -> str:
+        """Decode IDs directly when local inference or evaluation exposes them."""
+        kwargs.setdefault("clean_up_tokenization_spaces", False)
+        return self.alien_tokenizer.decode(token_ids, **kwargs)
+
     def _translate(self, text: TextOrList, source, target) -> TextOrList:
         if isinstance(text, str):
             token_ids = source.encode(text, add_special_tokens=False)
@@ -104,7 +133,7 @@ def _parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--direction",
-        choices=["alien2plain", "plain2alien"],
+        choices=["alien2plain", "plain2alien", "recover-server-response"],
         default="alien2plain",
     )
     parser.add_argument("text", nargs="*", help="Text to translate; if empty, read stdin.")
@@ -125,6 +154,8 @@ def main() -> None:
 
     if args.direction == "alien2plain":
         output_text = translator.alien2plain(input_text)
+    elif args.direction == "recover-server-response":
+        output_text = translator.recover_server_response(input_text)
     else:
         output_text = translator.plain2alien(input_text)
 
