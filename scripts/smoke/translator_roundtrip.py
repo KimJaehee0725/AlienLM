@@ -61,9 +61,14 @@ def main() -> None:
         plain = "hello world"
         alien = translator.plain2alien(plain)
         round_trip = translator.alien2plain(alien)
+        decoded_ids = translator.decode_token_ids(
+            [4, 5],
+            skip_special_tokens=False,
+        )
 
     assert alien == "zul nara", alien
     assert round_trip == plain, round_trip
+    assert decoded_ids == alien, decoded_ids
     print("translator round-trip smoke test passed")
 
 
