@@ -43,7 +43,7 @@ class SingleAlienTokenizer(PreTrainedTokenizerBase):
     A tokenizer wrapper that translates text with a single alien tokenizer.
 
     - encode: plain -> alien -> base encode
-    - decode: base decode -> alien -> plain
+    - decode: generated IDs -> alien decode (no lossy text round trip)
     """
 
     def __init__(
@@ -133,8 +133,8 @@ class SingleAlienTokenizer(PreTrainedTokenizerBase):
         return self.base_tokenizer(alien_text, **kwargs)
 
     def decode(self, token_ids, **kwargs):
-        base_text = self.base_tokenizer.decode(token_ids, **kwargs)
-        return self.alien2plain(base_text)
+        kwargs.setdefault("clean_up_tokenization_spaces", False)
+        return self.alien_tokenizer.decode(token_ids, **kwargs)
 
     @property
     def pad_token_id(self):

@@ -59,7 +59,7 @@ class MultiAlienTokenizer(PreTrainedTokenizerBase):
     A tokenizer wrapper that translates text using multiple alien tokenizers.
 
     - encode: plain -> alien (active) -> base encode
-    - decode: base decode -> alien (active) -> plain
+    - decode: generated IDs -> alien decode (active; no lossy text round trip)
     """
 
     def __init__(
@@ -177,10 +177,14 @@ class MultiAlienTokenizer(PreTrainedTokenizerBase):
         return self.base_tokenizer.encode(alien_text, add_special_tokens=add_special_tokens, **kwargs)
 
     def decode(self, token_ids, skip_special_tokens=True, **kwargs):
-        """Decode token IDs and apply alien->plain translation."""
+        """Decode IDs directly with the selected alien tokenizer."""
         alien = self._choose_alien()
-        alien_text = self.base_tokenizer.decode(token_ids, skip_special_tokens=skip_special_tokens, **kwargs)
-        return self._alien2plain(alien_text, alien)
+        kwargs.setdefault("clean_up_tokenization_spaces", False)
+        return alien.decode(
+            token_ids,
+            skip_special_tokens=skip_special_tokens,
+            **kwargs,
+        )
 
     def __call__(self, text, **kwargs):
         """Call tokenizer with plain->alien translation applied."""
